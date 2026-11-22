@@ -224,7 +224,15 @@ fun GamesScreen(
             ) {
                 GlassMetricCard(
                     modifier = Modifier.weight(1f),
-                    onClick = { SystemIntentsHelper.openDndPolicyAccessSettings(context) }
+                    onClick = {
+                        if (!SystemIntentsHelper.openDndPolicyAccessSettings(context)) {
+                            android.widget.Toast.makeText(
+                                context,
+                                "DND Policy settings unavailable on this device.",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -252,10 +260,17 @@ fun GamesScreen(
                 GlassMetricCard(
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        if (telemetry.hasWriteSettingsAccess) {
+                        val launched = if (telemetry.hasWriteSettingsAccess) {
                             SystemIntentsHelper.openDisplaySettings(context)
                         } else {
                             SystemIntentsHelper.openWriteSettingsAccess(context)
+                        }
+                        if (!launched) {
+                            android.widget.Toast.makeText(
+                                context,
+                                "Display settings unavailable on this device.",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 ) {

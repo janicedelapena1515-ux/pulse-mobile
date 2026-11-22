@@ -318,13 +318,13 @@ fun StorageCleanerScreen(
                                     )
                                     IconButton(
                                         onClick = { onRemoveSafFolder(folder.uriString) },
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(36.dp)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Close,
                                             contentDescription = "Remove ${folder.displayName}",
                                             tint = SecondaryText,
-                                            modifier = Modifier.size(14.dp)
+                                            modifier = Modifier.size(16.dp)
                                         )
                                     }
                                 }

@@ -275,13 +275,29 @@ fun SettingsScreen(
                     title = "Do Not Disturb Policy Access",
                     granted = telemetry.hasDndPolicyAccess,
                     actionLabel = "Configure",
-                    onAction = { SystemIntentsHelper.openDndPolicyAccessSettings(context) }
+                    onAction = {
+                        if (!SystemIntentsHelper.openDndPolicyAccessSettings(context)) {
+                            android.widget.Toast.makeText(
+                                context,
+                                "DND Policy settings unavailable on this Android build.",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 )
                 CapabilityStatusRow(
                     title = "Modify System Settings (Brightness)",
                     granted = telemetry.hasWriteSettingsAccess,
                     actionLabel = "Configure",
-                    onAction = { SystemIntentsHelper.openWriteSettingsAccess(context) }
+                    onAction = {
+                        if (!SystemIntentsHelper.openWriteSettingsAccess(context)) {
+                            android.widget.Toast.makeText(
+                                context,
+                                "Modify System Settings screen unavailable on this Android build.",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 )
                 CapabilityStatusRow(
                     title = "SAF Scoped Folders Granted",
