@@ -60,5 +60,4 @@ jobs:
           name: ${{ startsWith(github.ref, 'refs/tags/') && format('Pulse Mobile {0}', github.ref_name) || 'Pulse Mobile Latest APK' }}
           files: pulse-mobile-debug.apk
           prerelease: false
-          make_latest: true
           generate_release_notes: true
