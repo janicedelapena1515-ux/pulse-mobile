@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Pulse Mobile</string>
+    <string name="brand_subtitle">LUXURY CHERRY EDITION</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_boost">Boost</string>
+    <string name="nav_games">Games</string>
+    <string name="nav_monitor">Monitor</string>
+    <string name="nav_tools">Tools</string>
+    <string name="boost_my_device">BOOST MY DEVICE</string>
+    <string name="scanning_device">ANALYZING TELEMETRY</string>
+    <string name="settings_title">Preferences &amp; Diagnostics</string>
+    <string name="storage_cleaner_title">Smart Storage Cleaner</string>
+</resources>

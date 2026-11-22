@@ -1,0 +1,6 @@
+{
+  "name": "Pulse Mobile",
+  "description": "Luxury cherry-red Android device optimization, real-time telemetry, gaming profiles, and SAF storage cleaner.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

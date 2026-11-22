@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cherry_obsidian">#FF10090D</color>
+    <color name="cherry_velvet">#FF1A0D13</color>
+    <color name="cherry_card">#FF241018</color>
+    <color name="deep_cherry">#FF650D27</color>
+    <color name="ruby_red">#FFA3153D</color>
+    <color name="glossy_crimson">#FFD62959</color>
+    <color name="lipstick_highlight">#FFF05A80</color>
+    <color name="soft_pink">#FFFF9BB3</color>
+    <color name="silk_cream">#FFFFF3F5</color>
+    <color name="rose_ash">#FFB99AA5</color>
+</resources>
