@@ -4,14 +4,9 @@ A Kotlin & Jetpack Compose Android device optimization, real-time telemetry, gam
 
 ## Download APK
 
-### Option 1: GitHub Releases (on this repository)
-1. Click the **Releases** link on the right sidebar of this GitHub repository (or open the **Actions** tab to check the **Build & Release APK** workflow status).
-2. Under the **Pulse Mobile Latest APK** release, download **`pulse-mobile-debug.apk`**.
-
-*(Note: After pushing from AI Studio, wait ~2–3 minutes for the **Build & Release APK** GitHub Action in the **Actions** tab to finish building and attaching the APK to **Releases**.)*
-
-### Option 2: Direct APK Export in AI Studio
-In Google AI Studio, open the **Settings / Export** menu and choose **Generate APK** to download the APK directly without waiting for GitHub Actions.
+- **[Open APK Download Page](DOWNLOAD.md)** *(links to this repository's Releases once a release is published)*
+- Or click **Releases** on the right sidebar of this GitHub repository to download `pulse-mobile-debug.apk`.
+- In Google AI Studio, open the **Settings / Export** menu and choose **Generate APK** to download directly.
 
 ## Highlights
 
