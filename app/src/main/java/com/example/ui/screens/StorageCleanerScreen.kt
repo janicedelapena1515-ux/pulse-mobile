@@ -42,7 +42,6 @@ import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SelectAll
-import androidx.compose.material.icons.rounded.Sort
 import androidx.compose.material.icons.rounded.VideoFile
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -572,11 +571,18 @@ fun StorageCleanerScreen(
                 if (!file.isAppCacheFile) {
                     TextButton(
                         onClick = {
-                            SystemIntentsHelper.openUriWithExternalViewer(
+                            val opened = SystemIntentsHelper.openUriWithExternalViewer(
                                 context,
                                 file.uriString,
                                 file.mimeType
                             )
+                            if (!opened) {
+                                android.widget.Toast.makeText(
+                                    context,
+                                    "No installed app can open this file type.",
+                                    android.widget.Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     ) {
                         Icon(

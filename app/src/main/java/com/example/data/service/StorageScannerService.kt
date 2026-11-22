@@ -89,13 +89,15 @@ class StorageScannerService(private val context: Context) {
         }
 
         // 2. Scan user-authorized Storage Access Framework (SAF) folders
+        var accessibleFolderCount = 0
         for (folder in folders) {
             _summary.value = _summary.value.copy(
                 scanProgressMessage = "Scanning ${folder.displayName}..."
             )
             val uri = Uri.parse(folder.uriString)
-            val rootDoc = DocumentFile.fromTreeUri(context, uri)
+            val rootDoc = runCatching { DocumentFile.fromTreeUri(context, uri) }.getOrNull()
             if (rootDoc == null || !rootDoc.exists() || !rootDoc.canRead()) continue
+            accessibleFolderCount++
 
             val folderItems = mutableListOf<ScannedFileItem>()
             traverseDocumentTree(
@@ -151,34 +153,15 @@ class StorageScannerService(private val context: Context) {
             )
         }
 
-        var duplicateExtraBytes = 0L
-        for ((_, uris) in duplicateHashGroups) {
-            val sizes = uris.mapNotNull { u -> finalItems.firstOrNull { it.uriString == u }?.sizeBytes }
-            if (sizes.size > 1) {
-                duplicateExtraBytes += sizes.sum() - sizes.first()
-            }
+        val scanMessage = if (accessibleFolderCount == 0) {
+            "App cache scanned. Add folders via SAF to scan Downloads, Media & Docs."
+        } else {
+            "Scan complete across $accessibleFolderCount folder(s)"
         }
-
-        val largeItems = finalItems.filter { it.isLargeFile }
-        val oldDownloads = finalItems.filter { it.isOldDownload }
-
-        val resultSummary = StorageScanSummary(
-            isScanning = false,
-            scanProgressMessage = if (folders.isEmpty()) {
-                "App cache scanned. Add folders via SAF to scan Downloads, Media & Docs."
-            } else {
-                "Scan complete across ${folders.size} folder(s)"
-            },
-            scannedFolderCount = folders.size,
-            totalFiles = finalItems.size,
-            totalBytes = finalItems.sumOf { it.sizeBytes },
-            largeFilesCount = largeItems.size,
-            largeFilesBytes = largeItems.sumOf { it.sizeBytes },
-            oldDownloadsCount = oldDownloads.size,
-            oldDownloadsBytes = oldDownloads.sumOf { it.sizeBytes },
-            duplicateGroupsCount = duplicateHashGroups.size,
-            duplicateExtraBytes = duplicateExtraBytes,
-            appCacheBytes = appCacheTotal,
+        val resultSummary = buildSummaryFromItems(
+            items = finalItems,
+            scannedFolderCount = accessibleFolderCount,
+            scanProgressMessage = scanMessage,
             lastScanMillis = System.currentTimeMillis()
         )
 
@@ -207,17 +190,26 @@ class StorageScannerService(private val context: Context) {
             }
 
             if (deletedUris.isNotEmpty()) {
-                val remaining = _scannedFiles.value.filterNot { it.uriString in deletedUris }
+                val remainingBeforeDupRefresh = _scannedFiles.value.filterNot { it.uriString in deletedUris }
+                // Re-evaluate duplicate group membership so singleton survivors lose the DUPLICATE badge
+                val remainingGroupCounts = remainingBeforeDupRefresh
+                    .mapNotNull { it.duplicateGroupId }
+                    .groupingBy { it }
+                    .eachCount()
+                val remaining = remainingBeforeDupRefresh.map { item ->
+                    val gid = item.duplicateGroupId
+                    if (gid != null && (remainingGroupCounts[gid] ?: 0) <= 1) {
+                        item.copy(duplicateGroupId = null)
+                    } else {
+                        item
+                    }
+                }
                 _scannedFiles.value = remaining
-                val current = _summary.value
-                _summary.value = current.copy(
-                    totalFiles = remaining.size,
-                    totalBytes = remaining.sumOf { it.sizeBytes },
-                    largeFilesCount = remaining.count { it.isLargeFile },
-                    largeFilesBytes = remaining.filter { it.isLargeFile }.sumOf { it.sizeBytes },
-                    oldDownloadsCount = remaining.count { it.isOldDownload },
-                    oldDownloadsBytes = remaining.filter { it.isOldDownload }.sumOf { it.sizeBytes },
-                    appCacheBytes = remaining.filter { it.isAppCacheFile }.sumOf { it.sizeBytes }
+                _summary.value = buildSummaryFromItems(
+                    items = remaining,
+                    scannedFolderCount = _summary.value.scannedFolderCount,
+                    scanProgressMessage = _summary.value.scanProgressMessage,
+                    lastScanMillis = _summary.value.lastScanMillis
                 )
             }
             deletedCount to bytesRecovered
@@ -239,12 +231,45 @@ class StorageScannerService(private val context: Context) {
         }
         val remaining = _scannedFiles.value.filterNot { it.isAppCacheFile }
         _scannedFiles.value = remaining
-        _summary.value = _summary.value.copy(
-            appCacheBytes = 0L,
-            totalFiles = remaining.size,
-            totalBytes = remaining.sumOf { it.sizeBytes }
+        _summary.value = buildSummaryFromItems(
+            items = remaining,
+            scannedFolderCount = _summary.value.scannedFolderCount,
+            scanProgressMessage = _summary.value.scanProgressMessage,
+            lastScanMillis = _summary.value.lastScanMillis
         )
         recovered
+    }
+
+    private fun buildSummaryFromItems(
+        items: List<ScannedFileItem>,
+        scannedFolderCount: Int,
+        scanProgressMessage: String,
+        lastScanMillis: Long
+    ): StorageScanSummary {
+        val largeItems = items.filter { it.isLargeFile }
+        val oldDownloads = items.filter { it.isOldDownload }
+        val dupGroups = items.filter { it.duplicateGroupId != null }
+            .groupBy { it.duplicateGroupId!! }
+            .filter { it.value.size > 1 }
+        var duplicateExtraBytes = 0L
+        for ((_, groupItems) in dupGroups) {
+            duplicateExtraBytes += groupItems.sumOf { it.sizeBytes } - groupItems.first().sizeBytes
+        }
+        return StorageScanSummary(
+            isScanning = false,
+            scanProgressMessage = scanProgressMessage,
+            scannedFolderCount = scannedFolderCount,
+            totalFiles = items.size,
+            totalBytes = items.sumOf { it.sizeBytes },
+            largeFilesCount = largeItems.size,
+            largeFilesBytes = largeItems.sumOf { it.sizeBytes },
+            oldDownloadsCount = oldDownloads.size,
+            oldDownloadsBytes = oldDownloads.sumOf { it.sizeBytes },
+            duplicateGroupsCount = dupGroups.size,
+            duplicateExtraBytes = duplicateExtraBytes,
+            appCacheBytes = items.filter { it.isAppCacheFile }.sumOf { it.sizeBytes },
+            lastScanMillis = lastScanMillis
+        )
     }
 
     suspend fun inspectPickedMediaUri(uri: Uri): InspectedMediaInfo? = withContext(Dispatchers.IO) {

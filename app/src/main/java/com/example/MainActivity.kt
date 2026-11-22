@@ -107,6 +107,9 @@ fun PulseMobileApp() {
     LifecycleEventEffect(Lifecycle.Event.ON_START) {
         mainViewModel.startMonitoring()
     }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        mainViewModel.refreshNow()
+    }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
         mainViewModel.stopMonitoring()
     }

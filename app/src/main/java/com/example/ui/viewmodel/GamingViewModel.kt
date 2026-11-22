@@ -140,6 +140,11 @@ class GamingViewModel(application: Application) : AndroidViewModel(application) 
         launchGameApp: Boolean = false,
         onPollingIntervalOverride: (Long?) -> Unit
     ) {
+        val previous = _activeSession.value
+        if (previous != null) {
+            finalizeSessionAsync(previous)
+        }
+
         val ctx = getApplication<Application>()
         val profile = game?.let {
             runCatching { GamingProfile.valueOf(it.preferredProfile) }.getOrNull()
@@ -190,11 +195,20 @@ class GamingViewModel(application: Application) : AndroidViewModel(application) 
         _activeSession.value = null
         onPollingIntervalOverride(null)
 
-        viewModelScope.launch {
+        finalizeSessionAsync(session) {
             if (dndAppliedBySession) {
                 SystemIntentsHelper.applyDoNotDisturbIfPermitted(getApplication(), false)
                 dndAppliedBySession = false
             }
+            _gamingFeedback.value = "Saved ${session.appName} gaming session to statistics."
+        }
+    }
+
+    private fun finalizeSessionAsync(
+        session: ActiveGamingSession,
+        onDone: (suspend () -> Unit)? = null
+    ) {
+        viewModelScope.launch {
             val tele = telemetryService.telemetry.value
             val duration = (System.currentTimeMillis() - session.startTimeMillis).coerceAtLeast(1000L)
             val avgRam = if (session.ramSamples.isNotEmpty()) {
@@ -216,7 +230,7 @@ class GamingViewModel(application: Application) : AndroidViewModel(application) 
                     endBatteryLevel = tele.batteryLevel
                 )
             )
-            _gamingFeedback.value = "Saved ${session.appName} gaming session to statistics."
+            onDone?.invoke()
         }
     }
 

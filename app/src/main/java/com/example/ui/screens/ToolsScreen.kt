@@ -196,6 +196,15 @@ fun ToolsScreen(
         }
 
         item {
+            val launchSetting: (Boolean, String) -> Unit = { launched, label ->
+                if (!launched) {
+                    android.widget.Toast.makeText(
+                        context,
+                        "$label settings unavailable on this Android build.",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -208,49 +217,49 @@ fun ToolsScreen(
                     subtitle = telemetry.animatorDurationScale?.let {
                         "Current animator scale: ${it}x • Opens Developer Options"
                     } ?: "Configure Window & Animator transition scales",
-                    onClick = { SystemIntentsHelper.openDeveloperAnimationSettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openDeveloperAnimationSettings(context), "Developer / Animation") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.DisplaySettings,
                     title = "Display & Refresh Rate",
                     subtitle = "${telemetry.displayRefreshRateHz.toInt()} Hz active • Brightness & adaptive display",
-                    onClick = { SystemIntentsHelper.openDisplaySettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openDisplaySettings(context), "Display") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.Apps,
                     title = "App Management & Background Limits",
                     subtitle = "Inspect installed apps, permissions, and background activity",
-                    onClick = { SystemIntentsHelper.openAppManagementSettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openAppManagementSettings(context), "App Management") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.Storage,
                     title = "Android System Storage Manager",
                     subtitle = "Free: ${FormatUtils.formatBytes(telemetry.storageAvailBytes)} • Manage OS & third-party caches",
-                    onClick = { SystemIntentsHelper.openStorageSettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openStorageSettings(context), "System Storage") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.BatterySaver,
                     title = "Battery Saver & Optimization",
                     subtitle = if (telemetry.isPowerSaveMode) "Battery Saver is ON" else "Configure power profiles & app restrictions",
-                    onClick = { SystemIntentsHelper.openBatterySaverSettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openBatterySaverSettings(context), "Battery Saver") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.Wifi,
                     title = "Network & Wi-Fi Settings",
                     subtitle = "Active: ${telemetry.networkTransport}${if (telemetry.isNetworkMetered) " (Metered)" else ""}",
-                    onClick = { SystemIntentsHelper.openNetworkSettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openNetworkSettings(context), "Network") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.DoNotDisturbOn,
                     title = "Do Not Disturb Policy Access",
                     subtitle = if (telemetry.hasDndPolicyAccess) "Granted for Gaming Profiles" else "Allow Pulse Mobile to toggle DND during gaming",
-                    onClick = { SystemIntentsHelper.openDndPolicyAccessSettings(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openDndPolicyAccessSettings(context), "DND Policy") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.Tune,
                     title = "Modify System Settings (Brightness)",
                     subtitle = if (telemetry.hasWriteSettingsAccess) "Granted for Gaming Profiles" else "Allow brightness adjustment for Gaming Profiles",
-                    onClick = { SystemIntentsHelper.openWriteSettingsAccess(context) }
+                    onClick = { launchSetting(SystemIntentsHelper.openWriteSettingsAccess(context), "Modify System Settings") }
                 )
                 ToolShortcutCard(
                     icon = Icons.Rounded.Settings,
