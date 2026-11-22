@@ -2,11 +2,12 @@
 
 A Kotlin & Jetpack Compose Android device optimization, real-time telemetry, gaming profile, and Storage Access Framework (SAF) cleaner application.
 
-## APK Download & Releases
+## Download APK
 
-- **[APK Download & Release Instructions](DOWNLOAD.md)**
-- On GitHub, open the **Releases** tab on your repository page to download `pulse-mobile-debug.apk` once a release is published (do **not** use `/releases/latest` before a release exists, as GitHub returns 404 until the first release is published).
-- In Google AI Studio, open **Settings / Export → Generate APK** to download the `.apk` directly right now.
+- **[GitHub Releases Page](https://github.com/janicedelapena1515-ux/pulse-mobile/releases)** *(see **Pulse Mobile (Latest APK)** once the workflow finishes)*
+- **[Direct Latest APK Download](https://github.com/janicedelapena1515-ux/pulse-mobile/releases/latest/download/pulse-mobile-debug.apk)** *(becomes active after the Build & Release APK workflow completes)*
+- **[Build Progress (GitHub Actions)](https://github.com/janicedelapena1515-ux/pulse-mobile/actions)**
+- **[Download & Troubleshooting Guide](DOWNLOAD.md)**
 
 ## Highlights
 
