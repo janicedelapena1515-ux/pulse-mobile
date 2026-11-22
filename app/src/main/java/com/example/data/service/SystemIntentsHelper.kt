@@ -145,7 +145,7 @@ object SystemIntentsHelper {
             .mapNotNull { info ->
                 val appInfo = info.activityInfo?.applicationInfo ?: return@mapNotNull null
                 if (appInfo.packageName == selfPkg) return@mapNotNull null
-                val label = info.loadLabel(pm)?.toString()?.trim().orEmpty()
+                val label = info.loadLabel(pm).toString().trim()
                 if (label.isEmpty()) return@mapNotNull null
                 val isGame = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     appInfo.category == ApplicationInfo.CATEGORY_GAME

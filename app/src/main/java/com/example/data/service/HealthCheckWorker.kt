@@ -78,9 +78,9 @@ class HealthCheckWorker(
             nm.createNotificationChannel(channel)
         }
 
-        val tempNote = tempC?.let { " | Temp ${String.format("%.1f", it)}°C" } ?: ""
+        val tempNote = tempC?.let { " | Temp ${FormatUtils.formatTempC(it)}" } ?: ""
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_pulse_notification)
             .setContentTitle("Pulse Mobile Health Check ($score/100)")
             .setContentText("Free storage: $freeStorage$tempNote")
             .setPriority(NotificationCompat.PRIORITY_LOW)

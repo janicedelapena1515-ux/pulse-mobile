@@ -248,7 +248,7 @@ fun MonitorScreen(
         item {
             AnimatedLineChart(
                 title = "Battery Temperature Trend",
-                currentValueText = telemetry.batteryTempC?.let { "${String.format("%.1f", it)}°C" } ?: "Unavailable",
+                currentValueText = telemetry.batteryTempC?.let { FormatUtils.formatTempC(it) } ?: "Unavailable",
                 samples = history.batteryTempHistory,
                 minScale = 20f,
                 maxScale = 50f,
@@ -279,7 +279,7 @@ fun MonitorScreen(
                 MonitorKeyValueRow("Awake Uptime", FormatUtils.formatUptime(telemetry.awakeMillis))
                 MonitorKeyValueRow(
                     "Ambient Temp Sensor",
-                    telemetry.ambientTempC?.let { "${String.format("%.1f", it)}°C" } ?: "Not present on hardware"
+                    telemetry.ambientTempC?.let { FormatUtils.formatTempC(it) } ?: "Not present on hardware"
                 )
             }
         }

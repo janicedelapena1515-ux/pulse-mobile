@@ -84,7 +84,7 @@ class PulseMainViewModel(application: Application) : AndroidViewModel(applicatio
     val uiMessage: StateFlow<String?> = _uiMessage.asStateFlow()
 
     private var pollingJob: Job? = null
-    private var overrideRefreshIntervalMs: Long? = null
+    private val overrideRefreshIntervalMs = MutableStateFlow<Long?>(null)
 
     init {
         viewModelScope.launch {
@@ -110,14 +110,14 @@ class PulseMainViewModel(application: Application) : AndroidViewModel(applicatio
         telemetryService.startSensorMonitoring()
         if (pollingJob?.isActive == true) return
         pollingJob = viewModelScope.launch {
-            prefsRepo.preferences.collectLatest { prefs ->
+            combine(prefsRepo.preferences, overrideRefreshIntervalMs) { prefs, overrideMs ->
+                (overrideMs ?: prefs.monitorRefreshMs).coerceIn(500L, 10000L)
+            }.collectLatest { interval ->
                 while (isActive) {
                     val scanSummary = storageService.summary.value
                     telemetryService.refreshSnapshot(
                         scannedClutterBytes = scanSummary.duplicateExtraBytes + scanSummary.oldDownloadsBytes
                     )
-                    val interval = (overrideRefreshIntervalMs ?: prefs.monitorRefreshMs)
-                        .coerceIn(500L, 10000L)
                     delay(interval)
                 }
             }
@@ -131,7 +131,7 @@ class PulseMainViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setGamingPollingOverride(intervalMs: Long?) {
-        overrideRefreshIntervalMs = intervalMs
+        overrideRefreshIntervalMs.value = intervalMs
     }
 
     fun refreshNow() {

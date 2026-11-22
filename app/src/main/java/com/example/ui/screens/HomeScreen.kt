@@ -349,7 +349,7 @@ fun HomeScreen(
                             color = MainText
                         )
                         Text(
-                            text = "${telemetry.socLabel} • ${telemetry.batteryTempC?.let { "${String.format("%.1f", it)}°C" } ?: telemetry.thermalStatusLabel}",
+                            text = "${telemetry.socLabel} • ${telemetry.batteryTempC?.let { FormatUtils.formatTempC(it) } ?: telemetry.thermalStatusLabel}",
                             style = MaterialTheme.typography.bodySmall,
                             color = SecondaryText
                         )

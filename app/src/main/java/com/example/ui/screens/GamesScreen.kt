@@ -198,7 +198,7 @@ fun GamesScreen(
                         MetricMiniPill("RAM", "${telemetry.ramPercent.toInt()}%")
                         MetricMiniPill(
                             "TEMP",
-                            telemetry.batteryTempC?.let { "${String.format("%.1f", it)}°C" } ?: "N/A"
+                            telemetry.batteryTempC?.let { FormatUtils.formatTempC(it) } ?: "N/A"
                         )
                         MetricMiniPill("NET", telemetry.networkTransport)
                     }
@@ -452,7 +452,7 @@ fun GamesScreen(
                 ) {
                     MetricMiniPill("SESSIONS", "${sessions.size}")
                     MetricMiniPill("TOTAL TIME", FormatUtils.formatUptime(totalPlayMs))
-                    MetricMiniPill("PEAK TEMP", peakTemp?.let { "${String.format("%.1f", it)}°C" } ?: "N/A")
+                    MetricMiniPill("PEAK TEMP", peakTemp?.let { FormatUtils.formatTempC(it) } ?: "N/A")
                 }
 
                 if (sessions.isNotEmpty()) {

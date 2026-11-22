@@ -80,7 +80,7 @@ class OptimizationEngine(
         )
 
         // C. Battery Optimization
-        val tempStr = telemetry.batteryTempC?.let { "${String.format("%.1f", it)}°C" } ?: "Unavailable"
+        val tempStr = telemetry.batteryTempC?.let { FormatUtils.formatTempC(it) } ?: "Unavailable"
         list += OptimizationOpportunity(
             id = "battery_thermal",
             category = OptimizationCategory.BATTERY,

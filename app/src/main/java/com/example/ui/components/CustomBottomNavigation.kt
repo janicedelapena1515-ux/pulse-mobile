@@ -18,15 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ShowChart
+import androidx.compose.material.icons.automirrored.rounded.ShowChart
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.ShowChart
 import androidx.compose.material.icons.outlined.SportsEsports
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.ShowChart
 import androidx.compose.material.icons.rounded.SportsEsports
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -69,7 +69,7 @@ enum class PulseTab(
     HOME("home", "HOME", Icons.Rounded.Home, Icons.Outlined.Home),
     BOOST("boost", "BOOST", Icons.Rounded.Bolt, Icons.Outlined.Bolt),
     GAMES("games", "GAMES", Icons.Rounded.SportsEsports, Icons.Outlined.SportsEsports),
-    MONITOR("monitor", "MONITOR", Icons.Rounded.ShowChart, Icons.Outlined.ShowChart),
+    MONITOR("monitor", "MONITOR", Icons.AutoMirrored.Rounded.ShowChart, Icons.AutoMirrored.Outlined.ShowChart),
     TOOLS("tools", "TOOLS", Icons.Rounded.Build, Icons.Outlined.Build)
 }
 

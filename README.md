@@ -4,15 +4,13 @@ A Kotlin & Jetpack Compose Android device optimization, real-time telemetry, gam
 
 ## Download APK
 
-Once this repository is pushed to GitHub:
+> **[Download Latest APK (GitHub Releases)](../../releases/latest/download/pulse-mobile-debug.apk)**  
+> *(Or open the **Releases** tab: [View All Releases](../../releases))*
 
-1. **GitHub Releases (Direct Download Link):**  
-   Open the **Releases** section on the right sidebar of this GitHub repository (or visit `https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/releases/latest`) to download the latest `pulse-mobile-debug.apk`.
-   - You can publish a new APK release automatically by pushing a tag (`git tag v1.0.0 && git push origin v1.0.0`) or by running the **Build & Release APK** workflow manually from the **Actions** tab (`workflow_dispatch`).
-2. **GitHub Actions Artifacts:**  
-   Every push to `main` runs `.github/workflows/release-apk.yml` and uploads `pulse-mobile-debug.apk` as a downloadable build artifact in the **Actions** tab.
-3. **AI Studio Direct Export:**  
-   In Google AI Studio, you can also generate and download the APK directly from the **Settings / Export** menu.
+### How GitHub Releases Work Here
+1. Push this project to GitHub (via AI Studio's **Push to GitHub** button).
+2. GitHub Actions (`.github/workflows/release-apk.yml`) automatically runs on every push to `main`/`master` (or any `v*` tag), builds `pulse-mobile-debug.apk`, and publishes it under the **`latest`** GitHub Release.
+3. Once the workflow finishes (~2–3 minutes in the **Actions** tab), the **Download Latest APK** link above and the **Releases** sidebar on GitHub will download `pulse-mobile-debug.apk` directly.
 
 ## Highlights
 

@@ -43,6 +43,7 @@ import com.example.ui.theme.LocalReducedMotion
 import com.example.ui.theme.MainText
 import com.example.ui.theme.SecondaryText
 import com.example.ui.theme.SoftPinkHighlight
+import com.example.util.FormatUtils
 
 @Composable
 fun BatteryIndicator(
@@ -148,7 +149,7 @@ fun BatteryIndicator(
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
-                        text = "${String.format("%.1f", tempC)}°C",
+                        text = FormatUtils.formatTempC(tempC),
                         style = MaterialTheme.typography.labelMedium,
                         color = if (tempC >= 40f) AmberWarm else SoftPinkHighlight
                     )

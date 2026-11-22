@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
+import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.material.icons.rounded.AudioFile
 import androidx.compose.material.icons.rounded.CheckBox
 import androidx.compose.material.icons.rounded.CheckBoxOutlineBlank
@@ -371,7 +372,7 @@ fun StorageCleanerScreen(
                     Box {
                         TextButton(onClick = { showSortMenu = true }) {
                             Icon(
-                                imageVector = Icons.Rounded.Sort,
+                                imageVector = Icons.AutoMirrored.Rounded.Sort,
                                 contentDescription = "Sort",
                                 tint = SoftPinkHighlight,
                                 modifier = Modifier

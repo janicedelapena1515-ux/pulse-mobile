@@ -29,6 +29,7 @@ import com.example.domain.model.DeviceTelemetry
 import com.example.domain.model.PerformanceBottleneck
 import com.example.domain.model.PulseScoreBreakdown
 import com.example.domain.model.TelemetryHistory
+import com.example.util.FormatUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -121,7 +122,7 @@ class DeviceTelemetryService(private val context: Context) {
             val allocatableBytes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 runCatching {
                     val sm = context.getSystemService(Context.STORAGE_SERVICE) as? StorageManager
-                    sm?.getAllocatableBytes(UUID.fromString("41217664-9172-527a-b3d5-edabb50a7d69"))
+                    sm?.getAllocatableBytes(StorageManager.UUID_DEFAULT)
                 }.getOrNull()
             } else null
 
@@ -189,9 +190,9 @@ class DeviceTelemetryService(private val context: Context) {
                 PowerManager.THERMAL_STATUS_SHUTDOWN -> "Shutdown Risk"
                 else -> when {
                     batteryTempC == null -> "Unavailable"
-                    batteryTempC >= 43f -> "Warm (${String.format("%.1f", batteryTempC)}°C)"
-                    batteryTempC >= 38f -> "Elevated (${String.format("%.1f", batteryTempC)}°C)"
-                    else -> "Nominal (${String.format("%.1f", batteryTempC)}°C)"
+                    batteryTempC >= 43f -> "Warm (${FormatUtils.formatTempC(batteryTempC)})"
+                    batteryTempC >= 38f -> "Elevated (${FormatUtils.formatTempC(batteryTempC)})"
+                    else -> "Nominal (${FormatUtils.formatTempC(batteryTempC)})"
                 }
             }
 
@@ -279,7 +280,7 @@ class DeviceTelemetryService(private val context: Context) {
                     context.display?.refreshRate
                 } else {
                     @Suppress("DEPRECATION")
-                    (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.defaultDisplay?.refreshRate
+                    (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.defaultDisplay?.let { it.refreshRate }
                 }
             }.getOrNull() ?: 60f
 
@@ -412,7 +413,7 @@ class DeviceTelemetryService(private val context: Context) {
         if (freeStoragePct < 15f) {
             bottlenecks += PerformanceBottleneck(
                 id = "low_storage",
-                title = "Low Storage Headroom (${String.format("%.1f", freeStoragePct)}% free)",
+                title = "Low Storage Headroom (${FormatUtils.formatOneDecimal(freeStoragePct)}% free)",
                 detail = "Flash storage slows down significantly when free space falls below 15%.",
                 recommendation = "Use Smart Storage Cleaner or System Storage Manager to remove large or duplicate files.",
                 severity = BottleneckSeverity.HIGH
@@ -458,7 +459,7 @@ class DeviceTelemetryService(private val context: Context) {
         if (temp != null && temp >= 40f) {
             bottlenecks += PerformanceBottleneck(
                 id = "elevated_thermal",
-                title = "Elevated Battery Temperature (${String.format("%.1f", temp)}°C)",
+                title = "Elevated Battery Temperature (${FormatUtils.formatTempC(temp)})",
                 detail = "Thermal throttling reduces peak CPU/GPU sustainability and accelerates battery wear.",
                 recommendation = "Lower brightness, pause fast charging while gaming, or enable Battery Saver.",
                 severity = if (temp >= 43f) BottleneckSeverity.HIGH else BottleneckSeverity.MODERATE

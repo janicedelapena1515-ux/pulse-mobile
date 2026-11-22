@@ -67,6 +67,10 @@ object FormatUtils {
         return sdf.format(Date(millis))
     }
 
+    fun formatTempC(tempC: Float): String = String.format(Locale.US, "%.1f°C", tempC)
+
+    fun formatOneDecimal(value: Float): String = String.format(Locale.US, "%.1f", value)
+
     fun performPulseHaptic(view: View, enabled: Boolean, heavy: Boolean = false) {
         if (!enabled) return
         val constant = if (heavy) {

@@ -118,11 +118,13 @@ class StorageScannerService(private val context: Context) {
             )
         }
 
+        val dedupedRawItems = rawItems.distinctBy { it.uriString }
+
         // 3. Real duplicate detection via size-grouping + SHA-256 content hash
         _summary.value = _summary.value.copy(
             scanProgressMessage = "Analyzing content hashes for duplicates..."
         )
-        val sizeGroups = rawItems.filter { it.sizeBytes > 1024L && !it.isAppCacheFile }
+        val sizeGroups = dedupedRawItems.filter { it.sizeBytes > 1024L && !it.isAppCacheFile }
             .groupBy { it.sizeBytes }
             .filter { it.value.size > 1 }
 
@@ -140,12 +142,12 @@ class StorageScannerService(private val context: Context) {
             .groupBy({ it.value }, { it.key })
             .filter { it.value.size > 1 }
 
-        val finalItems = rawItems.map { item ->
+        val finalItems = dedupedRawItems.map { item ->
             val hash = hashByUri[item.uriString]
             val isDup = hash != null && duplicateHashGroups.containsKey(hash)
             item.copy(
                 contentHash = hash,
-                duplicateGroupId = if (isDup) hash?.take(12) else null
+                duplicateGroupId = if (isDup) hash.take(12) else null
             )
         }
 
