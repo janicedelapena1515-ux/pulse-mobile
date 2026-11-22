@@ -25,16 +25,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Accept Android SDK licenses
+      - name: Set up Android SDK & Accept Licenses
+        uses: android-actions/setup-android@v4
+        with:
+          packages: |
+            platform-tools
+            platforms;android-36
+            build-tools;36.0.0
+
+      - name: Install Android SDK 36.1 & Ensure All Licenses
         run: |
-          SDK_DIR="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
-          if [ -n "$SDK_DIR" ]; then
-            mkdir -p "$SDK_DIR/licenses"
-            printf "\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n" > "$SDK_DIR/licenses/android-sdk-license"
-            if [ -x "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" ]; then
-              yes | "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --licenses || true
-            fi
-          fi
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platforms;android-36.1" || true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -48,7 +50,7 @@ jobs:
           fi
 
       - name: Build Debug APK
-        run: gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: Copy APK with clean filename
         run: cp app/build/outputs/apk/debug/app-debug.apk pulse-mobile-debug.apk
